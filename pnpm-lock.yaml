@@ -201,7 +201,7 @@ importers:
     devDependencies:
       '@nestjs/cli':
         specifier: ^12.0.0
-        version: 12.0.8(@types/node@24.19.2)(prettier@3.9.10)(ts-loader@9.6.2(typescript@6.0.3)(webpack@5.111.1(uglify-js@3.19.3)))(webpack@5.111.1(uglify-js@3.19.3))
+        version: 12.0.8(@types/node@24.19.2)(prettier@3.9.10)(ts-loader@9.6.2(typescript@6.0.3)(webpack@5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3)))(webpack@5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3))
       '@nestjs/mau':
         specifier: ^0.2.6
         version: 0.2.8
@@ -249,7 +249,7 @@ importers:
         version: 29.4.14(@babel/core@7.29.7(supports-color@8.1.1))(@jest/transform@30.5.2(supports-color@8.1.1))(@jest/types@30.5.1)(babel-jest@30.5.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(jest-util@30.5.1)(jest@30.5.2(@types/node@24.19.2)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@24.19.2)(typescript@6.0.3)))(typescript@6.0.3)
       ts-loader:
         specifier: ^9.5.2
-        version: 9.6.2(typescript@6.0.3)(webpack@5.111.1(uglify-js@3.19.3))
+        version: 9.6.2(typescript@6.0.3)(webpack@5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3))
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@24.19.2)(typescript@6.0.3)
@@ -267,13 +267,13 @@ importers:
         version: link:../../packages/shared
       next:
         specifier: 16.4.2
-        version: 16.4.2(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 16.4.2(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.1))(react@19.3.1)
       react:
-        specifier: 19.3.0
-        version: 19.3.0
+        specifier: 19.3.1
+        version: 19.3.1
       react-dom:
         specifier: 19.3.0
-        version: 19.3.0(react@19.3.0)
+        version: 19.3.0(react@19.3.1)
     devDependencies:
       '@tailwindcss/turbopack':
         specifier: ^4
@@ -4007,8 +4007,8 @@ packages:
   react-is@19.3.0:
     resolution: {integrity: sha512-UpMYezM4v5/18F28aC66AEsjXIgE02kyEMH6yLdgLXu/UTfa1Ntwck/nNLrbqJsEXW7gPb0coNO9FQse9WTovA==}
 
-  react@19.3.0:
-    resolution: {integrity: sha512-E8LUcbtBWt20bbl2YoHfx4ZDBdxVTfOKtCZn9cDSJ4l6/nuoApcpIBcj47t2wZoVX8g2ZHuMHbiShgCR1T5Sog==}
+  react@19.3.1:
+    resolution: {integrity: sha512-QNhWdt7nrgVWWQG58QuGsAR3jv3Hbe4mb4vz7w2csnHavciZJgda1CPNaldF6eVxv90ud3jUXpKlHL69gO38yw==}
     engines: {node: '>=0.10.0'}
 
   readable-stream@3.6.2:
@@ -5481,7 +5481,7 @@ snapshots:
       '@tybys/wasm-util': 0.10.4
     optional: true
 
-  '@nestjs/cli@12.0.8(@types/node@24.19.2)(prettier@3.9.10)(ts-loader@9.6.2(typescript@6.0.3)(webpack@5.111.1(uglify-js@3.19.3)))(webpack@5.111.1(uglify-js@3.19.3))':
+  '@nestjs/cli@12.0.8(@types/node@24.19.2)(prettier@3.9.10)(ts-loader@9.6.2(typescript@6.0.3)(webpack@5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3)))(webpack@5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3))':
     dependencies:
       '@angular-devkit/core': 22.2.0(chokidar@5.0.0)
       '@angular-devkit/schematics': 22.2.0(chokidar@5.0.0)
@@ -5499,8 +5499,8 @@ snapshots:
       tsconfig-paths: 4.2.0
       typescript: 6.0.3
     optionalDependencies:
-      ts-loader: 9.6.2(typescript@6.0.3)(webpack@5.111.1(uglify-js@3.19.3))
-      webpack: 5.111.1(uglify-js@3.19.3)
+      ts-loader: 9.6.2(typescript@6.0.3)(webpack@5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3))
+      webpack: 5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3)
     transitivePeerDependencies:
       - '@types/node'
       - prettier
@@ -8216,14 +8216,17 @@ snapshots:
 
   minimist@1.2.8: {}
 
-  minimizer-webpack-plugin@5.13.0(uglify-js@3.19.3)(webpack@5.111.1(uglify-js@3.19.3)):
+  minimizer-webpack-plugin@5.13.0(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3)(webpack@5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.5.0
       terser: 5.51.2
-      webpack: 5.111.1(uglify-js@3.19.3)
+      webpack: 5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3)
     optionalDependencies:
+      lightningcss: 1.32.0
+      postcss: 8.5.23
+      sharp: 0.35.5(@types/node@24.19.2)
       uglify-js: 3.19.3
 
   minipass@7.1.3: {}
@@ -8252,16 +8255,16 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  next@16.4.2(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  next@16.4.2(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@20.19.43)(react-dom@19.3.0(react@19.3.1))(react@19.3.1):
     dependencies:
       '@next/env': 16.4.2
       '@swc/helpers': 0.5.23
       baseline-browser-mapping: 2.11.28
       caniuse-lite: 1.0.30001815
       postcss: 8.5.23
-      react: 19.3.0
-      react-dom: 19.3.0(react@19.3.0)
-      styled-jsx: 5.1.6(@babel/core@7.29.7(supports-color@8.1.1))(react@19.3.0)
+      react: 19.3.1
+      react-dom: 19.3.0(react@19.3.1)
+      styled-jsx: 5.1.6(@babel/core@7.29.7(supports-color@8.1.1))(react@19.3.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 16.4.2
       '@next/swc-darwin-x64': 16.4.2
@@ -8601,9 +8604,9 @@ snapshots:
       iconv-lite: 0.7.3
       unpipe: 1.0.0
 
-  react-dom@19.3.0(react@19.3.0):
+  react-dom@19.3.0(react@19.3.1):
     dependencies:
-      react: 19.3.0
+      react: 19.3.1
       scheduler: 0.28.0
 
   react-is@16.13.1: {}
@@ -8612,7 +8615,7 @@ snapshots:
 
   react-is@19.3.0: {}
 
-  react@19.3.0: {}
+  react@19.3.1: {}
 
   readable-stream@3.6.2:
     dependencies:
@@ -8818,6 +8821,40 @@ snapshots:
       '@types/node': 20.19.43
     optional: true
 
+  sharp@0.35.5(@types/node@24.19.2):
+    dependencies:
+      '@img/colour': 1.1.0
+      detect-libc: 2.1.2
+      semver: 7.8.5
+    optionalDependencies:
+      '@img/sharp-darwin-arm64': 0.35.5
+      '@img/sharp-darwin-x64': 0.35.5
+      '@img/sharp-freebsd-wasm32': 0.35.5
+      '@img/sharp-libvips-darwin-arm64': 1.3.4
+      '@img/sharp-libvips-darwin-x64': 1.3.4
+      '@img/sharp-libvips-linux-arm': 1.3.4
+      '@img/sharp-libvips-linux-arm64': 1.3.4
+      '@img/sharp-libvips-linux-ppc64': 1.3.4
+      '@img/sharp-libvips-linux-riscv64': 1.3.4
+      '@img/sharp-libvips-linux-s390x': 1.3.4
+      '@img/sharp-libvips-linux-x64': 1.3.4
+      '@img/sharp-libvips-linuxmusl-arm64': 1.3.4
+      '@img/sharp-libvips-linuxmusl-x64': 1.3.4
+      '@img/sharp-linux-arm': 0.35.5
+      '@img/sharp-linux-arm64': 0.35.5
+      '@img/sharp-linux-ppc64': 0.35.5
+      '@img/sharp-linux-riscv64': 0.35.5
+      '@img/sharp-linux-s390x': 0.35.5
+      '@img/sharp-linux-x64': 0.35.5
+      '@img/sharp-linuxmusl-arm64': 0.35.5
+      '@img/sharp-linuxmusl-x64': 0.35.5
+      '@img/sharp-webcontainers-wasm32': 0.35.5
+      '@img/sharp-win32-arm64': 0.35.5
+      '@img/sharp-win32-ia32': 0.35.5
+      '@img/sharp-win32-x64': 0.35.5
+      '@types/node': 24.19.2
+    optional: true
+
   shebang-command@2.0.0:
     dependencies:
       shebang-regex: 3.0.0
@@ -8993,10 +9030,10 @@ snapshots:
     dependencies:
       '@tokenizer/token': 0.3.0
 
-  styled-jsx@5.1.6(@babel/core@7.29.7(supports-color@8.1.1))(react@19.3.0):
+  styled-jsx@5.1.6(@babel/core@7.29.7(supports-color@8.1.1))(react@19.3.1):
     dependencies:
       client-only: 0.0.1
-      react: 19.3.0
+      react: 19.3.1
     optionalDependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
 
@@ -9100,13 +9137,13 @@ snapshots:
       babel-jest: 30.5.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
       jest-util: 30.5.1
 
-  ts-loader@9.6.2(typescript@6.0.3)(webpack@5.111.1(uglify-js@3.19.3)):
+  ts-loader@9.6.2(typescript@6.0.3)(webpack@5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3)):
     dependencies:
       chalk: 4.1.2
       picomatch: 4.0.7
       source-map: 0.7.6
       typescript: 6.0.3
-      webpack: 5.111.1(uglify-js@3.19.3)
+      webpack: 5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3)
 
   ts-node@10.9.2(@types/node@24.19.2)(typescript@6.0.3):
     dependencies:
@@ -9294,7 +9331,7 @@ snapshots:
 
   webpack-sources@3.6.0: {}
 
-  webpack@5.111.1(uglify-js@3.19.3):
+  webpack@5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3):
     dependencies:
       '@types/estree': 1.0.9
       '@types/json-schema': 7.0.15
@@ -9308,7 +9345,7 @@ snapshots:
       events: 3.3.0
       graceful-fs: 4.2.11
       mime-db: 1.54.0
-      minimizer-webpack-plugin: 5.13.0(uglify-js@3.19.3)(webpack@5.111.1(uglify-js@3.19.3))
+      minimizer-webpack-plugin: 5.13.0(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3)(webpack@5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3))
       schema-utils: 4.5.0
       tapable: 2.3.3
       watchpack: 2.5.2
