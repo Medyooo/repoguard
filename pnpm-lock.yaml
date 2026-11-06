@@ -203,8 +203,8 @@ importers:
         specifier: ^12.0.0
         version: 12.0.8(@types/node@24.19.2)(prettier@3.9.10)(ts-loader@9.6.2(typescript@6.0.3)(webpack@5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3)))(webpack@5.111.1(lightningcss@1.32.0)(postcss@8.5.23)(sharp@0.35.5(@types/node@24.19.2))(uglify-js@3.19.3))
       '@nestjs/mau':
-        specifier: ^0.2.6
-        version: 0.2.8
+        specifier: ^0.2.9
+        version: 0.2.9
       '@nestjs/schematics':
         specifier: ^12.0.0
         version: 12.0.7(chokidar@5.0.0)(prettier@3.9.10)(typescript@6.0.3)
@@ -1090,8 +1090,8 @@ packages:
       '@nestjs/websockets':
         optional: true
 
-  '@nestjs/mau@0.2.8':
-    resolution: {integrity: sha512-nIb0i3c/KhKEbxZfYMEKv9Mcvk5miBdZcexnvkgnAUhoMO2BUjOGT+Khf2cZzu7B51Y7v01NG2JVl/HdQEUQ6w==}
+  '@nestjs/mau@0.2.9':
+    resolution: {integrity: sha512-VDrolWI8sAt1Z2HzQ+6uNtedK6+ZWmtp5bahuiu9HnJz9CgLUu5cN5WfR3kleMFPZWinSaExSFyUWtK8PBJp6Q==}
     engines: {node: '>= 20.0.0'}
     hasBin: true
 
@@ -5536,7 +5536,7 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 12.3.2(@nestjs/common@12.3.2(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@12.3.2)(supports-color@8.1.1)
 
-  '@nestjs/mau@0.2.8':
+  '@nestjs/mau@0.2.9':
     dependencies:
       chalk: 4.1.2
       cli-progress: 3.12.0
