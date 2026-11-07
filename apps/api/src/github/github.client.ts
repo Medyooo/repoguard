@@ -1,8 +1,9 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { z } from 'zod';
 import type { GithubRepo } from './github-url';
 import { commitSchema, repoSchema } from './github.schemas';
+import { ApiError } from '../common/api-error';
 
 const API = 'https://api.github.com';
 
@@ -14,11 +15,7 @@ export interface RepoInfo {
   sizeKb: number;
 }
 
-export class GithubError extends HttpException {
-  constructor(type: string, title: string, status: number, detail: string) {
-    super({ type, title, status, detail }, status);
-  }
-}
+export class GithubError extends ApiError {}
 
 @Injectable()
 export class GithubClient {
