@@ -1,9 +1,12 @@
 import { Global, Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Pool } from 'pg';
-
+import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
+import * as schema from './schema';
 
 export const PG_POOL = Symbol('PG_POOL');
+export const DRIZZLE = Symbol('DRIZZLE');
+export type Database = NodePgDatabase<typeof schema>;
 
 @Global()
 @Module({
@@ -25,7 +28,12 @@ export const PG_POOL = Symbol('PG_POOL');
        return pool
       },
     },
+    {
+      provide: DRIZZLE,
+      inject: [PG_POOL],
+      useFactory: (pool: Pool): Database => drizzle(pool, { schema }),
+    },
   ],
-  exports: [PG_POOL],
+  exports: [PG_POOL, DRIZZLE],
 })
 export class DatabaseModule {}

@@ -1,0 +1,22 @@
+meta {
+  name: Create scan - invalid URL
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/scans
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "repoUrl": "https://gitlab.com/foo/bar"
+  }
+}
+
+assert {
+  res.status: eq 400
+  res.body.type: eq invalid_request
+}
