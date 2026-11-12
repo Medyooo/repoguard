@@ -1,0 +1,16 @@
+meta {
+  name: Get scan - invalid id
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/scans/not-a-uuid
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 400
+  res.body.type: eq invalid_request
+}

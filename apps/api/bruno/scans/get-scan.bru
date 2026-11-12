@@ -1,0 +1,22 @@
+meta {
+  name: Get scan
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/scans/{{scanId}}
+  body: none
+  auth: none
+}
+
+docs {
+  Lancer d'abord "Create scan" : il renseigne la variable scanId.
+}
+
+assert {
+  res.status: eq 200
+  res.body.id: eq {{scanId}}
+  res.body.status: isString
+  res.body.createdAt: isString
+}

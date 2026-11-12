@@ -1,0 +1,30 @@
+meta {
+  name: Create scan
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/scans
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "repoUrl": "{{repoUrl}}"
+  }
+}
+
+vars:post-response {
+  scanId: res.body.id
+}
+
+assert {
+  res.status: in [200, 202]
+  res.body.id: isString
+  res.body.status: isString
+  res.body.cached: isBoolean
+  res.body.repo.owner: isString
+  res.body.links.self: isString
+}
