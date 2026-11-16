@@ -2,6 +2,8 @@ import type { ConfigService } from '@nestjs/config';
 import type { GithubClient } from '../github/github.client';
 import type { Scan, ScansRepository } from './scans.repository';
 import { ScansService } from './scans.service';
+import { ScanQueue } from '../queue/scan.queue';
+import { Logger } from '@nestjs/common';
 
 const NOW = new Date('2026-11-07T12:00:00Z').getTime();
 const HOUR = 60 * 60 * 1000;
@@ -24,15 +26,18 @@ function setup(ttlHours = 24) {
     create: jest.fn(),
     findById: jest.fn(),
     findRecentCompleted: jest.fn(),
+    markFailed: jest.fn(),
   };
   const github = { getRepoInfo: jest.fn() };
+  const queue = { enqueue: jest.fn().mockResolvedValue(undefined) };
   const config = { getOrThrow: jest.fn().mockReturnValue(ttlHours) };
   const service = new ScansService(
     scans as unknown as ScansRepository,
     github as unknown as GithubClient,
+    queue as unknown as ScanQueue,
     config as unknown as ConfigService,
   );
-  return { service, scans, github, config };
+  return { service, scans, github, queue, config };
 }
 
 // Cas de base : GitHub répond, aucun scan récent, la création réussit
@@ -212,6 +217,7 @@ describe('ScansService', () => {
           new ScansService(
             {} as unknown as ScansRepository,
             {} as unknown as GithubClient,
+            {} as unknown as ScanQueue,
             config as unknown as ConfigService,
           ),
       ).toThrow('CACHE_TTL_HOURS');
@@ -242,6 +248,180 @@ describe('ScansService', () => {
       scans.findById.mockRejectedValue(boom);
 
       await expect(service.get('scan-1')).rejects.toBe(boom);
+    });
+  });
+  describe('create › mise en file', () => {
+    it('met le nouveau scan en file avec son id', async () => {
+      const { service, queue } = happyPath();
+      await service.create(URL_OK);
+      expect(queue.enqueue).toHaveBeenCalledWith(row.id);
+    });
+
+    it('crée la ligne avant de la mettre en file', async () => {
+      const { service, scans, queue } = happyPath();
+      await service.create(URL_OK);
+      expect(scans.create.mock.invocationCallOrder[0]).toBeLessThan(
+        queue.enqueue.mock.invocationCallOrder[0],
+      );
+    });
+
+    it('ne met rien en file quand le résultat vient du cache', async () => {
+      const { service, scans, github, queue } = setup();
+      github.getRepoInfo.mockResolvedValue(info);
+      scans.findRecentCompleted.mockResolvedValue(done);
+      await service.create(URL_OK);
+      expect(queue.enqueue).not.toHaveBeenCalled();
+    });
+
+    it('ne met rien en file quand l’URL est invalide ou GitHub refuse', async () => {
+      const { service, github, queue } = setup();
+      await service.create('https://evil.com/a/b').catch(() => undefined);
+      github.getRepoInfo.mockRejectedValue(new Error('refus'));
+      await service.create(URL_OK).catch(() => undefined);
+      expect(queue.enqueue).not.toHaveBeenCalled();
+    });
+
+    describe('quand la file est indisponible', () => {
+      beforeEach(() => {
+        jest.spyOn(Logger.prototype, 'error').mockImplementation();
+      });
+
+      it('marque le scan failed et répond 503', async () => {
+        const { service, scans, queue } = happyPath();
+        queue.enqueue.mockRejectedValue(new Error('redis down'));
+
+        await expect(service.create(URL_OK)).rejects.toMatchObject({
+          response: { type: 'queue_unavailable', status: 503 },
+        });
+        expect(scans.markFailed).toHaveBeenCalledWith(
+          row.id,
+          expect.any(String),
+        );
+      });
+
+      it('ne divulgue pas la cause à l’utilisateur', async () => {
+        const { service, queue } = happyPath();
+        queue.enqueue.mockRejectedValue(new Error('redis down: 10.0.0.5:6379'));
+
+        const error = await service.create(URL_OK).catch((e) => e);
+        expect(JSON.stringify(error.response)).not.toContain('10.0.0.5');
+      });
+    });
+  });
+  describe('create › mise en file', () => {
+    it('met le nouveau scan en file avec son id', async () => {
+      const { service, queue } = happyPath();
+      await service.create(URL_OK);
+      expect(queue.enqueue).toHaveBeenCalledWith(row.id);
+    });
+
+    it('crée la ligne avant de la mettre en file', async () => {
+      const { service, scans, queue } = happyPath();
+      await service.create(URL_OK);
+      expect(scans.create.mock.invocationCallOrder[0]).toBeLessThan(
+        queue.enqueue.mock.invocationCallOrder[0],
+      );
+    });
+
+    it('ne met rien en file quand le résultat vient du cache', async () => {
+      const { service, scans, github, queue } = setup();
+      github.getRepoInfo.mockResolvedValue(info);
+      scans.findRecentCompleted.mockResolvedValue(done);
+      await service.create(URL_OK);
+      expect(queue.enqueue).not.toHaveBeenCalled();
+    });
+
+    it('ne met rien en file quand l’URL est invalide ou GitHub refuse', async () => {
+      const { service, github, queue } = setup();
+      await service.create('https://evil.com/a/b').catch(() => undefined);
+      github.getRepoInfo.mockRejectedValue(new Error('refus'));
+      await service.create(URL_OK).catch(() => undefined);
+      expect(queue.enqueue).not.toHaveBeenCalled();
+    });
+
+    describe('quand la file est indisponible', () => {
+      beforeEach(() => {
+        jest.spyOn(Logger.prototype, 'error').mockImplementation();
+      });
+
+      it('marque le scan failed et répond 503', async () => {
+        const { service, scans, queue } = happyPath();
+        queue.enqueue.mockRejectedValue(new Error('redis down'));
+
+        await expect(service.create(URL_OK)).rejects.toMatchObject({
+          response: { type: 'queue_unavailable', status: 503 },
+        });
+        expect(scans.markFailed).toHaveBeenCalledWith(
+          row.id,
+          expect.any(String),
+        );
+      });
+
+      it('ne divulgue pas la cause à l’utilisateur', async () => {
+        const { service, queue } = happyPath();
+        queue.enqueue.mockRejectedValue(new Error('redis down: 10.0.0.5:6379'));
+
+        const error = await service.create(URL_OK).catch((e) => e);
+        expect(JSON.stringify(error.response)).not.toContain('10.0.0.5');
+      });
+    });
+  });
+  describe('create › mise en file', () => {
+    it('met le nouveau scan en file avec son id', async () => {
+      const { service, queue } = happyPath();
+      await service.create(URL_OK);
+      expect(queue.enqueue).toHaveBeenCalledWith(row.id);
+    });
+
+    it('crée la ligne avant de la mettre en file', async () => {
+      const { service, scans, queue } = happyPath();
+      await service.create(URL_OK);
+      expect(scans.create.mock.invocationCallOrder[0]).toBeLessThan(
+        queue.enqueue.mock.invocationCallOrder[0],
+      );
+    });
+
+    it('ne met rien en file quand le résultat vient du cache', async () => {
+      const { service, scans, github, queue } = setup();
+      github.getRepoInfo.mockResolvedValue(info);
+      scans.findRecentCompleted.mockResolvedValue(done);
+      await service.create(URL_OK);
+      expect(queue.enqueue).not.toHaveBeenCalled();
+    });
+
+    it('ne met rien en file quand l’URL est invalide ou GitHub refuse', async () => {
+      const { service, github, queue } = setup();
+      await service.create('https://evil.com/a/b').catch(() => undefined);
+      github.getRepoInfo.mockRejectedValue(new Error('refus'));
+      await service.create(URL_OK).catch(() => undefined);
+      expect(queue.enqueue).not.toHaveBeenCalled();
+    });
+
+    describe('quand la file est indisponible', () => {
+      beforeEach(() => {
+        jest.spyOn(Logger.prototype, 'error').mockImplementation();
+      });
+
+      it('marque le scan failed et répond 503', async () => {
+        const { service, scans, queue } = happyPath();
+        queue.enqueue.mockRejectedValue(new Error('redis down'));
+
+        await expect(service.create(URL_OK)).rejects.toMatchObject({
+          response: { type: 'queue_unavailable', status: 503 },
+        });
+        expect(scans.markFailed).toHaveBeenCalledWith(
+          row.id,
+          expect.any(String),
+        );
+      });
+
+      it('ne divulgue pas la cause à l’utilisateur', async () => {
+        const { service, queue } = happyPath();
+        queue.enqueue.mockRejectedValue(new Error('redis down: 10.0.0.5:6379'));
+
+        const error = await service.create(URL_OK).catch((e) => e);
+        expect(JSON.stringify(error.response)).not.toContain('10.0.0.5');
+      });
     });
   });
 });

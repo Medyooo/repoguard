@@ -49,4 +49,11 @@ export class ScansRepository {
       .limit(1);
     return row;
   }
+
+  async markFailed(id: string, message: string): Promise<void> {
+    await this.db
+      .update(scans)
+      .set({ status: 'failed', errorMessage: message, finishedAt: new Date() })
+      .where(eq(scans.id, id));
+  }
 }

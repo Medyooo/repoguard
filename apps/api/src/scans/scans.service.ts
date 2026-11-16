@@ -1,9 +1,10 @@
 import { Scan, ScansRepository } from './scans.repository';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { GithubClient } from '../github/github.client';
 import { parseGithubUrl } from '../github/github-url';
 import { ApiError } from '../common/api-error';
 import { ConfigService } from '@nestjs/config';
+import { ScanQueue } from '../queue/scan.queue';
 
 export  interface CreateScanResult {
   scan : Scan;
@@ -13,10 +14,12 @@ export  interface CreateScanResult {
 @Injectable()
 export class ScansService {
   private readonly cacheTtlMs: number;
+  private readonly logger = new Logger(ScansService.name);
 
   constructor(
     private readonly scans: ScansRepository,
     private readonly github: GithubClient,
+    private readonly queue: ScanQueue,
     config: ConfigService,
   ) {
     this.cacheTtlMs = config.getOrThrow('CACHE_TTL_HOURS') * 60 * 60 * 1000;
@@ -47,6 +50,16 @@ export class ScansService {
     }
 
     const scan = await this.scans.create(ref);
+
+    try {
+      await this.queue.enqueue(scan.id);
+    } catch (error) {
+      this.logger.error(
+        `Mise en file impossible pour le scan ${scan.id}: ${(error as Error).message}`,
+      );
+      await this.scans.markFailed(scan.id, 'Impossible de mettre le scan en file');
+      throw new ApiError('queue_unavailable', 'Service indisponible', 503, 'Réessaie dans un instant');
+    }
     return { scan, cached: false };
   }
 
